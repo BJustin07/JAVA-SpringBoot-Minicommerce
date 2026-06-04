@@ -1,11 +1,16 @@
 package com.medina.mini_commerce.Customer;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.medina.mini_commerce.Customer.dto.CustomerRequestDTO;
+import com.medina.mini_commerce.Customer.dto.CustomerResponseDTO;
+import com.medina.mini_commerce.Customer.dto.CustomerResponseWithOrdersDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("customer")
+@RequestMapping("/customer")
 public class CustomerController {
     private final CustomerService customerService;
     public CustomerController(CustomerService customerService) {
@@ -15,5 +20,20 @@ public class CustomerController {
     @GetMapping("/")
     public String customerHelloWorld(){
         return "Hello World!";
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<CustomerResponseDTO>createCustomer(@RequestBody CustomerRequestDTO customerRequestDTO){
+        return ResponseEntity.ok(customerService.createCustomer(customerRequestDTO));
+    }
+
+    @GetMapping("/customers")
+    public ResponseEntity<List<CustomerResponseDTO>>getAllCustomers(){
+        return ResponseEntity.ok(customerService.getAllCustomers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseWithOrdersDTO> getCustomerById(@PathVariable Long id){
+        return ResponseEntity.ok(customerService.getCustomerById(id));
     }
 }

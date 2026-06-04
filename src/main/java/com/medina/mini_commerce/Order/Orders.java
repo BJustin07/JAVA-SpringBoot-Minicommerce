@@ -1,17 +1,18 @@
 package com.medina.mini_commerce.Order;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.medina.mini_commerce.Customer.Customer;
 import com.medina.mini_commerce.Product.Product;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "orders")
 public class Orders {
     @Id
@@ -22,9 +23,14 @@ public class Orders {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
+    @JsonBackReference
     private Customer customer;
 
-    @ManyToMany
-    private Set<Product> products;
+//    @ManyToMany
+//    @JoinTable(name = "orders_products",
+//    joinColumns = @JoinColumn(name = "orders_id"),
+//    inverseJoinColumns = @JoinColumn(name = "product_id"))
+//    private Set<Product> products;
+
     private Double totalOrderAmount;
 }

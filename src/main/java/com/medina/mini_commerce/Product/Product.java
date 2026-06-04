@@ -2,13 +2,14 @@ package com.medina.mini_commerce.Product;
 
 import com.medina.mini_commerce.Order.Orders;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+
 import java.util.Set;
 
 @Entity
-@Data
-@RequiredArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "product")
 public class Product {
     @Id
@@ -18,6 +19,6 @@ public class Product {
     private String productDescription;
     private Integer quantity;
     private Double price;
-    @ManyToMany
-    private Set<Orders> order;
+//    @ManyToMany(mappedBy = "products")
+//    private Set<Orders> orders;
 }
