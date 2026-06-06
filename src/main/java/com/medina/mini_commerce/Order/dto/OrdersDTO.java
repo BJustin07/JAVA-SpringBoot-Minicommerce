@@ -1,17 +1,14 @@
-package com.medina.mini_commerce.Order;
+package com.medina.mini_commerce.Order.dto;
 
-import com.medina.mini_commerce.Customer.Customer;
-import com.medina.mini_commerce.Product.Product;
-import com.medina.mini_commerce.Product.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class OrdersDTO {
     private Integer orderNumber;
     private LocalDate orderDate;

@@ -3,6 +3,7 @@ package com.medina.mini_commerce.Customer;
 import com.medina.mini_commerce.Customer.dto.CustomerRequestDTO;
 import com.medina.mini_commerce.Customer.dto.CustomerResponseDTO;
 import com.medina.mini_commerce.Customer.dto.CustomerResponseWithOrdersDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class CustomerController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<CustomerResponseDTO>createCustomer(@RequestBody CustomerRequestDTO customerRequestDTO){
+    public ResponseEntity<CustomerResponseDTO>createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO){
         return ResponseEntity.ok(customerService.createCustomer(customerRequestDTO));
     }
 
