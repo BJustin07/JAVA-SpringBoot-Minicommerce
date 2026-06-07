@@ -43,7 +43,6 @@ public class CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFound("Customer does not Exist"));
         List<OrdersDTO> customerOrders = ordersService.getOrdersByCustomerId(customer.getId());
-        //gamitin yung ordersService dito para iget by customerId yung orders?
         return new CustomerResponseWithOrdersDTO(
                 customer.getCustomerName(),
                 customerOrders

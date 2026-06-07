@@ -19,6 +19,6 @@ public class Product {
     private String productDescription;
     private Integer quantity;
     private Double price;
-//    @ManyToMany(mappedBy = "products")
-//    private Set<Orders> orders;
+    @ManyToMany(mappedBy = "products")
+    private Set<Orders> orders;
 }

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrdersDTO {
-    private Integer orderNumber;
+    private String orderNumber;
     private LocalDate orderDate;
 //    private Set<ProductDTO> products;
     private Double totalOrderAmount;
