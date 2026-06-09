@@ -9,14 +9,15 @@ import com.medina.mini_commerce.Order.dto.OrdersDTO;
 import com.medina.mini_commerce.Product.Product;
 import com.medina.mini_commerce.Product.ProductRepository;
 import com.medina.mini_commerce.Product.ProductService;
+import com.medina.mini_commerce.Product.dto.ProductOrdersDTO;
+import com.medina.mini_commerce.Product.dto.ProductRequestDTO;
+import com.medina.mini_commerce.Product.dto.ProductResponseDTO;
 import com.medina.mini_commerce.Product.exceptions.ProductNotFound;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -37,43 +38,62 @@ public class OrdersService {
     public List<OrdersDTO> getOrdersByCustomerId(Long customerId){
         Customer customer = getCustomerById(customerId);
         List<Orders>orders = ordersRepository.findByCustomerId(customer.getId());
+        Set<ProductOrdersDTO> ordersProducts = orders.stream()
+                .flatMap(products -> products.getProducts().stream())
+                .map(product -> new ProductOrdersDTO(
+                        product.getProductCode(),
+                        product.getProductDescription(),
+                        product.getPrice()
+                ))
+                .collect(Collectors.toSet());
+
 
         return orders.stream()
                 .map(order -> new OrdersDTO(
                         order.getOrderNumber(),
                         order.getOrderDate(),
+                        ordersProducts,
                         order.getTotalOrderAmount()
                 ))
                 .toList();
     }
 
     @Transactional
-    public String createOrderByCustomerId(OrdersRequestDTO ordersRequestDTO){
+    public String createOrderByCustomerId(OrdersRequestDTO ordersRequestDTO) {
+        Double totalOrderAmount = 0.0;
         Customer customer = getCustomerById(ordersRequestDTO.getCustomerId());
 
-        //need to extract the ProductsDTO from ordersRequestDTO, to match
-        //with the products entity retrieved from DB to get totalOrderAmount
-        //and to be able to update the product entity quantity as well.
         Set<Product> products = ordersRequestDTO.getProducts().stream()
                 .map(productReqDTO -> productRepository.findByProductCode(productReqDTO.getProductCode())
                         .orElseThrow(() -> new ProductNotFound("Product does not exist")))
                 .collect(Collectors.toSet());
 
-        Double totalOrderAmount = products.stream()
-                .mapToDouble(product -> product.getPrice())
-                .reduce(0.0,(sumPrice, currentPrice) -> sumPrice * );
+        Map<String, Product> productMap = products.stream()
+                .collect((Collectors.toMap(
+                        product -> product.getProductCode(),
+                                product -> product
+                )));
 
-
+        for (ProductRequestDTO productReq : ordersRequestDTO.getProducts()){
+            Product product = productMap.get(productReq.getProductCode());
+            totalOrderAmount += product.getPrice() * productReq.getQuantity();
+            if( (product.getQuantity() - productReq.getQuantity()) < 0 ){
+                //parang dapat ma improve to as exception handled ng RestAPI layer or pwede idecouple tong pag process ng order
+                // sa ibang method and then dun mag try catch.
+                System.out.println("Current stocks of product cannot accomodate product request quantity");
+            }else{
+                product.setQuantity(product.getQuantity() - productReq.getQuantity());
+                productRepository.save(product);
+            }
+        }
 
         Orders orders = new Orders();
         orders.setOrderNumber(generateOrderNumber());
         orders.setCustomer(customer);
         orders.setOrderDate(LocalDate.now());
+        //mas okay ata kung sa getOrderByCustomerId dinedefine yung totalOrderAmount hindi sa pag create ng order
         orders.setTotalOrderAmount(totalOrderAmount);
         orders.setProducts(products);
-        //To be filled out yung setProduct ng Product na entity
-        // to edit yung setTotalOrderAmount kasi wala pa yung get products
-        //dapat yung total ng products ung iseset na totalOrderAmount
         ordersRepository.save(orders);
         return "Successfully created order for customer: " + customer.getCustomerName();
     }
