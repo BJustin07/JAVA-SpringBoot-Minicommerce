@@ -13,6 +13,7 @@ import com.medina.mini_commerce.Product.dto.ProductOrdersDTO;
 import com.medina.mini_commerce.Product.dto.ProductRequestDTO;
 import com.medina.mini_commerce.Product.dto.ProductResponseDTO;
 import com.medina.mini_commerce.Product.exceptions.ProductNotFound;
+import com.medina.mini_commerce.Product.exceptions.ProductOutOfStock;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -78,9 +79,10 @@ public class OrdersService {
             Product product = productMap.get(productReq.getProductCode());
             totalOrderAmount += product.getPrice() * productReq.getQuantity();
             if( (product.getQuantity() - productReq.getQuantity()) < 0 ){
-                //parang dapat ma improve to as exception handled ng RestAPI layer or pwede idecouple tong pag process ng order
-                // sa ibang method and then dun mag try catch.
-                System.out.println("Current stocks of product cannot accomodate product request quantity");
+                throw new ProductOutOfStock("Could not process order, " +
+                        "current stock cannot accommodate order request for product "
+                        + product.getProductDescription()
+                        + " with product code: " + product.getProductCode());
             }else{
                 product.setQuantity(product.getQuantity() - productReq.getQuantity());
                 productRepository.save(product);
@@ -91,7 +93,6 @@ public class OrdersService {
         orders.setOrderNumber(generateOrderNumber());
         orders.setCustomer(customer);
         orders.setOrderDate(LocalDate.now());
-        //mas okay ata kung sa getOrderByCustomerId dinedefine yung totalOrderAmount hindi sa pag create ng order
         orders.setTotalOrderAmount(totalOrderAmount);
         orders.setProducts(products);
         ordersRepository.save(orders);
