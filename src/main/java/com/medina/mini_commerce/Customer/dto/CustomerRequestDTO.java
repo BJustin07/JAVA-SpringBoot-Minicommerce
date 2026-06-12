@@ -1,7 +1,9 @@
 package com.medina.mini_commerce.Customer.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +11,13 @@ import org.aspectj.bridge.IMessage;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class CustomerRequestDTO {
-    private long id;
+    @NotBlank(message = "email field cannot be blank")
+    @Email
+    String customerEmail;
+    @NotBlank(message = "password field cannot be blank")
+    String customerPassword;
     @NotBlank(message = "customer name is required")
     private String customerName;
     @NotBlank(message = "customer number is required")

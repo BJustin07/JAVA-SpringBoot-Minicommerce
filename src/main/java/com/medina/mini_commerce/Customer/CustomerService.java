@@ -27,6 +27,8 @@ public class CustomerService {
         newCustomer.setCustomerName(customerRequestDTO.getCustomerName());
         newCustomer.setCustomerNumber(String.valueOf(customerRequestDTO.getCustomerNumber()));
         newCustomer.setCustomerAddress(customerRequestDTO.getCustomerAddress());
+        newCustomer.setCustomerEmail(customerRequestDTO.getCustomerEmail());
+        newCustomer.setCustomerPassword(customerRequestDTO.getCustomerPassword());
         customerRepository.save(newCustomer);
 
         return new CustomerResponseDTO(newCustomer.getCustomerName());

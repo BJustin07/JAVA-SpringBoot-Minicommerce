@@ -23,11 +23,6 @@ public class CustomerController {
         return "Hello World!";
     }
 
-    @PostMapping("/")
-    public ResponseEntity<CustomerResponseDTO>createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO){
-        return ResponseEntity.ok(customerService.createCustomer(customerRequestDTO));
-    }
-
     @GetMapping("/customers")
     public ResponseEntity<List<CustomerResponseDTO>>getAllCustomers(){
         return ResponseEntity.ok(customerService.getAllCustomers());

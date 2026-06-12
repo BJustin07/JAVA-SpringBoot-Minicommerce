@@ -2,6 +2,7 @@ package com.medina.mini_commerce.Auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,14 @@ import lombok.Setter;
 public class AuthRegisterDTO {
     @NotBlank(message = "email field cannot be blank")
     @Email
-    String email;
+    String customerEmail;
     @NotBlank(message = "password field cannot be blank")
-    String password;
+    String customerPassword;
+    @NotBlank(message = "customer name is required")
+    private String customerName;
+    @NotBlank(message = "customer number is required")
+    @Size(min = 11, max = 11, message ="complete 11 digit customer number")
+    private String customerNumber;
+    @NotBlank(message = "customerAddress is required")
+    private String customerAddress;
 }
