@@ -1,6 +1,6 @@
 package com.medina.mini_commerce.GlobalExceptionHandler;
 
-import com.medina.mini_commerce.Customer.Exceptions.CustomerExists;
+import com.medina.mini_commerce.Customer.Exceptions.CustomerEmailExists;
 import com.medina.mini_commerce.Customer.Exceptions.CustomerNotFound;
 import com.medina.mini_commerce.Product.exceptions.ProductAlreadyExists;
 import com.medina.mini_commerce.Product.exceptions.ProductNotFound;
@@ -51,8 +51,8 @@ public class GlobalExceptionHandler {
         return ErrorResponse.errorResponseBuilder(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(CustomerExists.class)
-    public ResponseEntity<Map<String,Object>>handleCustomerExists(CustomerExists ex){
+    @ExceptionHandler(CustomerEmailExists.class)
+    public ResponseEntity<Map<String,Object>>handleCustomerExists(CustomerEmailExists ex){
         return ErrorResponse.errorResponseBuilder(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

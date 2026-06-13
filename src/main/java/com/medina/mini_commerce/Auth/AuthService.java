@@ -7,7 +7,7 @@ import com.medina.mini_commerce.Auth.jwt.JwtService;
 import com.medina.mini_commerce.Customer.Customer;
 import com.medina.mini_commerce.Customer.CustomerRepository;
 import com.medina.mini_commerce.Customer.CustomerService;
-import com.medina.mini_commerce.Customer.Exceptions.CustomerExists;
+import com.medina.mini_commerce.Customer.Exceptions.CustomerEmailExists;
 import com.medina.mini_commerce.Customer.Exceptions.CustomerNotFound;
 import com.medina.mini_commerce.Customer.dto.CustomerRequestDTO;
 import com.medina.mini_commerce.Customer.dto.CustomerResponseDTO;
@@ -29,24 +29,30 @@ public class AuthService {
     }
 
     public AuthResponseDTO loginUser(AuthLoginDTO authLoginDTO) {
-        Customer customer = customerRepository.findByCustomerEmail(authLoginDTO.getEmail())
+        Customer customer = customerRepository.findByCustomerEmail(authLoginDTO.getCustomerEmail())
                 .orElseThrow(() -> new CustomerNotFound("Customer not found"));
 
-        boolean validUser = passwordEncoder.matches(authLoginDTO.getPassword(), customer.getCustomerPassword());
+        boolean validUser = passwordEncoder.matches(authLoginDTO.getCustomerPassword(), customer.getCustomerPassword());
         if (!validUser) {
             throw new CustomerNotFound("Customer incorrect credentials");
         }
 
         return new AuthResponseDTO(
-                jwtService.generateJwtToken(authLoginDTO.getEmail()),
+                jwtService.generateJwtToken(authLoginDTO.getCustomerEmail()),
                 "Successfully logged in."
         );
 
     }
 
+    public boolean userExists(String email) {
+        return customerRepository.findByCustomerEmail(email).isPresent();
+    }
+
     public AuthResponseDTO registerUser(AuthRegisterDTO authRegisterDTO){
         customerRepository.findByCustomerEmail(authRegisterDTO.getCustomerEmail())
-                .orElseThrow(() -> new CustomerExists(" customerEmail already exists"));
+                .ifPresent(customer -> {
+                    throw new CustomerEmailExists("Customer email already exists");
+        });
 
         String hashedCustomerPassword = passwordEncoder.encode(authRegisterDTO.getCustomerPassword());
         CustomerResponseDTO customerResponseDTO = customerService.createCustomer(

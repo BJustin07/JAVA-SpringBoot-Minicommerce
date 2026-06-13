@@ -2,6 +2,7 @@ package com.medina.mini_commerce.Auth.jwt;
 
 import com.medina.mini_commerce.Customer.CustomerRepository;
 import com.medina.mini_commerce.Customer.CustomerService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -11,18 +12,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
 public class JwtService {
-    @Value("${jwt.secret.key}")
     private final String jwtSecretKey;
 
-    public JwtService(String jwtSecretKey) {
+    public JwtService(@Value("${jwt.secret.key}") String jwtSecretKey) {
         this.jwtSecretKey = jwtSecretKey;
     }
 
+//    public boolean validateJwtToken(String email, String token) {
+//        return (!email.isEmpty() && !isTokenExpired(token));
+//    }
+    //JwtToken is set to expired 5 minutes after creation
     public String generateJwtToken(String email) {
         return Jwts.builder()
                 .subject(email)
@@ -32,7 +36,20 @@ public class JwtService {
                 .compact();
     }
 
-    private Key signingKey(){
+    public Claims extractClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(signingKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    public boolean isTokenExpired(String token) {
+        Claims claims = extractClaims(token);
+        return claims.getExpiration().before(new Date());
+    }
+
+    private SecretKey signingKey(){
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }

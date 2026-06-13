@@ -10,7 +10,7 @@ import lombok.Setter;
 public class AuthLoginDTO {
     @NotBlank(message = "email field cannot be blank")
     @Email
-    String email;
+    String customerEmail;
     @NotBlank(message = "password field cannot be blank")
-    String password;
+    String customerPassword;
 }
