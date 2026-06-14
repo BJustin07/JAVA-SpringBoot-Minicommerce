@@ -6,6 +6,7 @@ import com.medina.mini_commerce.Customer.CustomerService;
 import com.medina.mini_commerce.Customer.Exceptions.CustomerNotFound;
 import com.medina.mini_commerce.Order.dto.OrdersRequestDTO;
 import com.medina.mini_commerce.Order.dto.OrdersDTO;
+import com.medina.mini_commerce.Order.exceptions.NoOrdersFoundForCustomer;
 import com.medina.mini_commerce.Product.Product;
 import com.medina.mini_commerce.Product.ProductRepository;
 import com.medina.mini_commerce.Product.ProductService;
@@ -15,6 +16,8 @@ import com.medina.mini_commerce.Product.dto.ProductResponseDTO;
 import com.medina.mini_commerce.Product.exceptions.ProductNotFound;
 import com.medina.mini_commerce.Product.exceptions.ProductOutOfStock;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,6 +42,9 @@ public class OrdersService {
     public List<OrdersDTO> getOrdersByCustomerId(Long customerId){
         Customer customer = getCustomerById(customerId);
         List<Orders>orders = ordersRepository.findByCustomerId(customer.getId());
+        if(orders.isEmpty()){
+            throw new NoOrdersFoundForCustomer("No orders for customer");
+        }
         Set<ProductOrdersDTO> ordersProducts = orders.stream()
                 .flatMap(products -> products.getProducts().stream())
                 .map(product -> new ProductOrdersDTO(
@@ -61,8 +67,8 @@ public class OrdersService {
 
     @Transactional
     public String createOrderByCustomerId(OrdersRequestDTO ordersRequestDTO) {
-        Double totalOrderAmount = 0.0;
         Customer customer = getCustomerById(ordersRequestDTO.getCustomerId());
+        Double totalOrderAmount = 0.0;
 
         Set<Product> products = ordersRequestDTO.getProducts().stream()
                 .map(productReqDTO -> productRepository.findByProductCode(productReqDTO.getProductCode())
@@ -101,8 +107,13 @@ public class OrdersService {
 
 
     public Customer getCustomerById(Long customerId){
-        return customerRepository.findById(customerId)
+        Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFound("Could not get orders for customer"));
+        String authenticatedCustomerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(!authenticatedCustomerEmail.isEmpty() && !customer.getCustomerEmail().equals(authenticatedCustomerEmail)) {
+            throw new AccessDeniedException("Access to resource denied");
+        }
+        return customer;
     }
 
     public String generateOrderNumber(){

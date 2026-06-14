@@ -2,11 +2,13 @@ package com.medina.mini_commerce.GlobalExceptionHandler;
 
 import com.medina.mini_commerce.Customer.Exceptions.CustomerEmailExists;
 import com.medina.mini_commerce.Customer.Exceptions.CustomerNotFound;
+import com.medina.mini_commerce.Order.exceptions.NoOrdersFoundForCustomer;
 import com.medina.mini_commerce.Product.exceptions.ProductAlreadyExists;
 import com.medina.mini_commerce.Product.exceptions.ProductNotFound;
 import com.medina.mini_commerce.Product.exceptions.ProductOutOfStock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -54,6 +56,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomerEmailExists.class)
     public ResponseEntity<Map<String,Object>>handleCustomerExists(CustomerEmailExists ex){
         return ErrorResponse.errorResponseBuilder(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(NoOrdersFoundForCustomer.class)
+    public ResponseEntity<Map<String,Object>>handleNoOrdersFoundForCustomer(NoOrdersFoundForCustomer ex){
+        return ErrorResponse.errorResponseBuilder(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String,Object>>handleAccessDenied(AccessDeniedException ex){
+        return ErrorResponse.errorResponseBuilder(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 }
 

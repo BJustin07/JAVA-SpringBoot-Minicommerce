@@ -44,10 +44,6 @@ public class AuthService {
 
     }
 
-    public boolean userExists(String email) {
-        return customerRepository.findByCustomerEmail(email).isPresent();
-    }
-
     public AuthResponseDTO registerUser(AuthRegisterDTO authRegisterDTO){
         customerRepository.findByCustomerEmail(authRegisterDTO.getCustomerEmail())
                 .ifPresent(customer -> {

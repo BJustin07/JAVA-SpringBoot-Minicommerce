@@ -7,6 +7,8 @@ import com.medina.mini_commerce.Customer.dto.CustomerResponseWithOrdersDTO;
 import com.medina.mini_commerce.Order.OrdersService;
 import com.medina.mini_commerce.Order.dto.OrdersDTO;
 import com.medina.mini_commerce.Order.OrdersRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -44,6 +46,10 @@ public class CustomerService {
     public CustomerResponseWithOrdersDTO getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFound("Customer does not Exist"));
+        String authenticatedCustomerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(!authenticatedCustomerEmail.isEmpty() && !customer.getCustomerEmail().equals(authenticatedCustomerEmail)) {
+            throw new AccessDeniedException("Access to resource denied");
+        }
         List<OrdersDTO> customerOrders = ordersService.getOrdersByCustomerId(customer.getId());
         return new CustomerResponseWithOrdersDTO(
                 customer.getCustomerName(),
