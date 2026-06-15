@@ -23,10 +23,6 @@ public class JwtService {
         this.jwtSecretKey = jwtSecretKey;
     }
 
-//    public boolean validateJwtToken(String email, String token) {
-//        return (!email.isEmpty() && !isTokenExpired(token));
-//    }
-    //JwtToken is set to expired 5 minutes after creation
     public String generateJwtToken(String email) {
         return Jwts.builder()
                 .subject(email)
@@ -53,9 +49,4 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-
-
-    //tapos create a filter that will utilize this JwtService
-    //then add that filter sa SecurityConfig, and voila JWT baby, JUNIT HERE I COOOOOOOME
 }

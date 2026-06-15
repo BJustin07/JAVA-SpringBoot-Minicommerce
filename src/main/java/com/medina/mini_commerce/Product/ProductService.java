@@ -45,8 +45,8 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDTO updateProductByProductCode(ProductRequestDTO productRequestDTO){
-        Product product = productRepository.findByProductCode(productRequestDTO.getProductCode())
+    public ProductResponseDTO updateProductByProductCode(String productCode, ProductRequestDTO productRequestDTO){
+        Product product = productRepository.findByProductCode(productCode)
                 .orElseThrow(() -> new ProductNotFound("Product Code does not exist"));
         if(productRequestDTO.getProductDescription() != null){
             product.setProductDescription(productRequestDTO.getProductDescription());

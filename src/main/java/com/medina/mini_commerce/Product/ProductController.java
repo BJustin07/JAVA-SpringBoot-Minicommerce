@@ -25,7 +25,7 @@ public class ProductController {
 
     @PutMapping("/")
     public ResponseEntity<ProductResponseDTO>updateProductByProductCode(@RequestBody ProductRequestDTO productRequestDTO){
-        return ResponseEntity.ok(productService.updateProductByProductCode(productRequestDTO));
+        return ResponseEntity.ok(productService.updateProductByProductCode(productRequestDTO.getProductCode(), productRequestDTO));
     }
 
     @DeleteMapping("/")
