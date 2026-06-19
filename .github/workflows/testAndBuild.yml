@@ -25,4 +25,19 @@ jobs:
       
     - name: check directory for .jar file
       run: ls
+
+    - name: Docker Login
+      uses: docker/login-action@v4.2.0
+      with:
+        registry: ghcr.io
+        username: ${{github.actor}}
+        password: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Docker Build Image
+      run: docker build -t ghcr.io/${{github.actor}}/mini-commerce-api:latest .
+
+    - name: Push Docker Image to GHCR
+      run: docker push ghcr.io/${{github.actor}}/mini-commerce-api:latest
+    
+          
     
