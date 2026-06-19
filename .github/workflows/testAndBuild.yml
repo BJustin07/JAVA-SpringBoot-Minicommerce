@@ -8,6 +8,9 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
+      packages: write
 
     runs-on: ubuntu-latest
 
@@ -34,10 +37,9 @@ jobs:
         password: ${{secrets.GITHUB_TOKEN}}
 
     - name: Docker Build Image
-      run: docker build -t ghcr.io/${{github.actor}}/mini-commerce-api:latest .
+      run: docker build -t ghcr.io/bjustin07/mini-commerce-api:latest .
 
     - name: Push Docker Image to GHCR
-      run: docker push ghcr.io/${{github.actor}}/mini-commerce-api:latest
-    
+      run: docker push ghcr.io/bjustin07/mini-commerce-api:latest
           
     
