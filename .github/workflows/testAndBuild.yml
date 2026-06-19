@@ -36,10 +36,9 @@ jobs:
         username: ${{github.actor}}
         password: ${{secrets.GITHUB_TOKEN}}
 
-    - name: Docker Build Image
-      run: docker build -t ghcr.io/bjustin07/mini-commerce-api:latest .
+    - name: Docker Build and Push Image to GHCR
+      run: |
+        docker build -t ghcr.io/bjustin07/mini-commerce-api:latest .
+        docker push ghcr.io/bjustin07/mini-commerce-api:latest
 
-    - name: Push Docker Image to GHCR
-      run: docker push ghcr.io/bjustin07/mini-commerce-api:latest
-          
     
