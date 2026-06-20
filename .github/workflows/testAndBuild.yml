@@ -44,4 +44,24 @@ jobs:
         docker push ghcr.io/bjustin07/mini-commerce-api:latest
         docker push ghcr.io/bjustin07/mini-commerce-api:${{github.sha}}
 
+    - name: Pull and Build via SSH EC2 (Test)
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{secrets.EC2_HOST_IP}}
+        username: ubuntu
+        key: ${{secrets.EC2_SECRET}}
+        script: |
+          whoami
+          hostname
+          # docker pull ghcr.io/bjustin07/mini-commerce-api:latest
+
+          # docker stop mini-commerce-api || true
+          # docker rm mini-commerce-api || true
+    
+          # docker run -d \
+          #   --name mini-commerce-api \
+          #   -p 8080:8080 \
+          #   ghcr.io/bjustin07/mini-commerce-api:latest
+          
+
     
