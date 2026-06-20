@@ -53,6 +53,7 @@ jobs:
         script: |
           # whoami
           # hostname
+          sudo su
           docker pull ghcr.io/bjustin07/mini-commerce-api:latest
 
           docker stop mini-commerce-api
