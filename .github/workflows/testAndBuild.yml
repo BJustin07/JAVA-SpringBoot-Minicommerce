@@ -51,17 +51,17 @@ jobs:
         username: ubuntu
         key: ${{secrets.EC2_SECRET}}
         script: |
-          whoami
-          hostname
-          # docker pull ghcr.io/bjustin07/mini-commerce-api:latest
+          # whoami
+          # hostname
+          docker pull ghcr.io/bjustin07/mini-commerce-api:latest
 
-          # docker stop mini-commerce-api || true
-          # docker rm mini-commerce-api || true
+          docker stop mini-commerce-api
+          docker rm -f mini-commerce-api
     
-          # docker run -d \
-          #   --name mini-commerce-api \
-          #   -p 8080:8080 \
-          #   ghcr.io/bjustin07/mini-commerce-api:latest
+          docker run -d \
+            --name mini-commerce-api \
+            -p 8080:8080 \
+            ghcr.io/bjustin07/mini-commerce-api:latest
           
 
     
