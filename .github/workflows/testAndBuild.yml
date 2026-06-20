@@ -53,13 +53,15 @@ jobs:
         script: |
           # whoami
           # hostname
-          sudo su
-          docker pull ghcr.io/bjustin07/mini-commerce-api:latest
+          docker ps -a
+          sudo docker pull ghcr.io/bjustin07/mini-commerce-api:latest
 
-          docker stop mini-commerce-api
-          docker rm -f mini-commerce-api
+          sudo docker stop mini-commerce-api
+          sudo docker rm -f mini-commerce-api
+
+          docker ps -a
     
-          docker run -d \
+          sudo docker run -d \
             --name mini-commerce-api \
             -p 8080:8080 \
             ghcr.io/bjustin07/mini-commerce-api:latest
